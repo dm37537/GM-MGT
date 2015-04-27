@@ -1,0 +1,31 @@
+<p>
+    1.登陆验证接口(get)<br/>&nbsp;&nbsp;&nbsp;&nbsp;a.http://127.0.0.1:8080/bdm-web/api/user/verify?user_name=zengweigang&amp;pass_word=e10adc3949ba59abbe56e057f20f883e&amp;sys_id=52&verify_code=sdadas564<br/>&nbsp;&nbsp;&nbsp;&nbsp;b.参数描述 &nbsp;user_name(用户登陆名) pass_word(密码md5值) sys_id(系统Id) verify_code(系统验证码)<br/>
+</p>
+<p>
+    2.单个游戏数据拉取接口(get)<br/>&nbsp;&nbsp;&nbsp;&nbsp;a.http://127.0.0.1:8080/bdm-web/api/game/down?super_id=38&sys_id=52&verify_code=sdadas564<br/>&nbsp;&nbsp;&nbsp;&nbsp;b.参数描述 &nbsp;super_id(游戏id) sys_id(系统Id) verify_code(系统验证码)<br/>
+</p>
+<p>
+    3.全部游戏数据拉取接口(get)<br/>&nbsp;&nbsp;&nbsp;&nbsp;a.http://127.0.0.1:8080/bdm-web/api/game/down?sys_id=52&verify_code=sdadas564<br/>&nbsp;&nbsp;&nbsp;&nbsp;b.参数描述 &nbsp;sys_id(系统Id) verify_code(系统验证码)<br/>
+</p>
+<p>
+    4.单个游戏数据更新接口(get)<br/>&nbsp;&nbsp;&nbsp;&nbsp;a.http://127.0.0.1:8080/bdm-web/api/game/down/update?super_id=38&sys_id=52&verify_code=sdadas564&date=2014-07-15 15:22:22<br/>&nbsp;&nbsp;&nbsp;&nbsp;b.参数描述 &nbsp;super_id(游戏id) sys_id(系统Id) verify_code(系统验证码) date(上次拉取数据 最大时间)<br/>
+</p>
+<p>
+    5.全部游戏数据更新接口(get)<br/>&nbsp;&nbsp;&nbsp;&nbsp;a.http://127.0.0.1:8080/bdm-web/api/game/down/update?sys_id=52&verify_code=sdadas564&date=2014-07-15 15:22:22<br/>&nbsp;&nbsp;&nbsp;&nbsp;b.参数描述 &nbsp;sys_id(系统Id) verify_code(系统验证码) date(上次拉取数据 最大时间)<br/>
+</p>
+<p>
+    6.用户权限数据接口(get)<br/>&nbsp;&nbsp;&nbsp;&nbsp;a.http://127.0.0.1:8080/bdm-web/api/user/pms?sys_id=52&verify_code=sdadas564&user_name=zengweigang<br/>&nbsp;&nbsp;&nbsp;&nbsp;b.参数描述 &nbsp;sys_id(系统Id) verify_code(系统验证码) user_name(用户登陆名)<br/>
+</p>
+<p>
+    7.密码修改接口(get)<br/>&nbsp;&nbsp;&nbsp;&nbsp;a.http://127.0.0.1:8080/bdm-web/api/user/reset/password?sys_id=52&verify_code=sdadas564&user_name=zengweigang&old_password=e10adc3949ba59abbe56e057f20f883e&new_password=e10adc3949ba59abbe56e057f20f883e<br/>&nbsp;&nbsp;&nbsp;&nbsp;b.参数描述 &nbsp;sys_id(系统Id) verify_code(系统验证码) user_name(用户登陆名) old_password(当前密码) new_password（新密码）<br/>
+</p>
+<p>
+    8.用户注册接口(post)<br/>&nbsp;&nbsp;&nbsp;&nbsp;a.http://127.0.0.1:8080/bdm-web/api/user/add?sys_id=52&verify_code=sdadas564&user=user对象的json串<br/>&nbsp;&nbsp;&nbsp;&nbsp;b.参数描述 &nbsp;sys_id(系统Id) verify_code(系统验证码) user_name(用户登陆名)<br/> &nbsp;&nbsp;&nbsp;&nbsp;user(user对象的属性如下 ↓)<br/>
+    &nbsp;&nbsp;&nbsp; String userName;// 用户名&nbsp;&nbsp; <br/>&nbsp;&nbsp;&nbsp; String password;// 密码(md5加密后的字符串  如果为空 默认密码为123@mokylin )&nbsp;&nbsp;&nbsp; <br/>&nbsp;&nbsp;&nbsp; String name;// 用户姓名&nbsp;&nbsp; <br/>&nbsp;&nbsp;&nbsp; String email;// 邮箱&nbsp;&nbsp;&nbsp; <br/>&nbsp;&nbsp;&nbsp; String mobile;// 用户手机&nbsp;&nbsp;&nbsp; <br/>&nbsp;&nbsp;&nbsp; String description;// 备注<br>
+</p>
+<p>
+    9.用户角色绑定(get)<br/>&nbsp;&nbsp;&nbsp;&nbsp;a.http://127.0.0.1:8080/bdm-web/api/user/set/role?sys_id=52&verify_code=sdadas564&user_name=zengweigang&role_id=角色id<br/>&nbsp;&nbsp;&nbsp;&nbsp;b.参数描述 &nbsp;sys_id(系统Id) verify_code(系统验证码) user_name(用户登陆名) role_id(角色id)<br/>
+</p>
+<p>
+    10.用户注销(get)<br/>&nbsp;&nbsp;&nbsp;&nbsp;a.http://127.0.0.1:8080/bdm-web/api/user/forbid?sys_id=52&verify_code=sdadas564&user_name=zengweigang<br/>&nbsp;&nbsp;&nbsp;&nbsp;b.参数描述 &nbsp;sys_id(系统Id) verify_code(系统验证码) user_name(用户登陆名)<br/>
+</p>

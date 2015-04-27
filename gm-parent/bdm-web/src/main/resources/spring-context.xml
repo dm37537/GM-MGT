@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+          http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+          http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+          http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd"
+       default-lazy-init="true">
+    <description>Spring Configuration</description>
+
+    <!-- 加载配置属性文件 -->
+    <context:property-placeholder ignore-unresolvable="true" location="classpath*:/gm.properties"/>
+
+    <!-- 缓存配置 -->
+    <!--<import resource="classpath:cache/spring-context-redis.xml.bak"/>-->
+    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+        <property name="configLocation" value="classpath:${ehcache.configFile}" />
+    </bean>
+
+    <!-- 使用Annotation自动注册Bean，解决事物失效问题：在主容器中不扫描@Controller注解，在SpringMvc中只扫描@Controller注解。  -->
+    <context:component-scan base-package="com.mokylin.gm"><!-- base-package 如果多个，用“,”分隔 -->
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+    <!-- 基本事务定义,使用transactionManager作事务管理,默认find*方法的事务为readonly -->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <!-- 指定哪些方法需要加入事务，可以使用通配符来只加入需要的方法 -->
+            <tx:method name="save*" propagation="REQUIRED" isolation="READ_UNCOMMITTED" timeout="36000"
+                       rollback-for="Exception"/>
+            <tx:method name="insert*" propagation="REQUIRED" isolation="READ_UNCOMMITTED" timeout="36000"
+                       rollback-for="Exception"/>
+            <tx:method name="add*" propagation="REQUIRED" isolation="READ_UNCOMMITTED" timeout="36000"
+                       rollback-for="Exception"/>
+            <tx:method name="update*" propagation="REQUIRED" isolation="READ_UNCOMMITTED" timeout="36000"
+                       rollback-for="Exception"/>
+            <tx:method name="delete*" propagation="REQUIRED" isolation="READ_UNCOMMITTED" timeout="36000"
+                       rollback-for="Exception"/>
+            <tx:method name="create*" read-only="true" isolation="READ_UNCOMMITTED"
+                       timeout="36000"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <aop:config>
+        <!-- 切面事务操作-->
+        <aop:pointcut id="servicePointcut"
+                      expression="execution(* com.mokylin.gm..*Service.*(..))"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="servicePointcut"/>
+    </aop:config>
+
+    <!-- 配置 Annotation 驱动，扫描@Transactional注解的类定义事务  -->
+    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
+
+    <!-- 配置 JSR303 Bean Validator 定义 -->
+    <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
+
+    <!-- Production 环境 -->
+    <beans profile="production">
+
+        <!-- 数据源配置, 使用 BoneCP 数据库连接池 -->
+        <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+            <!-- 数据源驱动类可不写，Druid默认会自动根据URL识别DriverClass -->
+            <property name="driverClassName" value="${jdbc.driver}"/>
+
+            <!-- 基本属性 url、user、password -->
+            <property name="url" value="${jdbc.url}"/>
+            <property name="username" value="${jdbc.username}"/>
+            <property name="password" value="${jdbc.password}"/>
+
+            <!-- 配置初始化大小、最小、最大 -->
+            <property name="initialSize" value="${jdbc.pool.minIdle}"/>
+            <property name="minIdle" value="${jdbc.pool.minIdle}"/>
+            <property name="maxActive" value="${jdbc.pool.maxActive}"/>
+
+            <!-- 配置获取连接等待超时的时间 -->
+            <property name="maxWait" value="60000"/>
+
+            <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+            <property name="timeBetweenEvictionRunsMillis" value="60000"/>
+
+            <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+            <property name="minEvictableIdleTimeMillis" value="300000"/>
+
+            <property name="validationQuery" value="SELECT 'x'"/>
+            <property name="testWhileIdle" value="true"/>
+            <property name="testOnBorrow" value="false"/>
+            <property name="testOnReturn" value="false"/>
+
+            <!-- 打开PSCache，并且指定每个连接上PSCache的大小（Oracle使用）
+            <property name="poolPreparedStatements" value="true" />
+            <property name="maxPoolPreparedStatementPerConnectionSize" value="20" /> -->
+
+            <!-- 配置监控统计拦截的filters -->
+            <property name="filters" value="stat"/>
+        </bean>
+
+        <!-- 配置namedParameterJdbcTemplate  -->
+        <bean id="jdbcNamed" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+            <constructor-arg ref="dataSource"/>
+        </bean>
+
+        <bean id="jdbc" class="org.springframework.jdbc.core.JdbcTemplate">
+            <constructor-arg ref="dataSource"/>
+        </bean>
+
+        <!-- 配置jdbcCall 用于调用存储过程和数据库函数 ,不要使用单例模式!!!!!! -->
+        <bean id="jdbcCall" scope="prototype" class="org.springframework.jdbc.core.simple.SimpleJdbcCall">
+            <constructor-arg ref="dataSource"/>
+        </bean>
+
+    </beans>
+</beans>
